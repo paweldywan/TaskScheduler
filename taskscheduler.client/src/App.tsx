@@ -165,7 +165,7 @@ const App = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const inputs: FormInput<Event>[] = useMemo(() => [
+    const inputs = useMemo<FormInput<Event>[]>(() => [
         {
             key: 'title',
             label: 'Title'
@@ -182,7 +182,7 @@ const App = () => {
         }
     ], []);
 
-    const additionalButtons: FormButton[] | undefined = useMemo(() => modalSettings.isAdding ? undefined : [
+    const additionalButtons = useMemo<FormButton[] | undefined>(() => modalSettings.isAdding ? undefined : [
         {
             label: 'Delete',
             onClick: executeDeleteEvent,
