@@ -108,14 +108,6 @@ const App = () => {
         setModalIsOpen(false);
     }, [setModalIsOpen]);
 
-    const executeAddEvent = useCallback(async () => {
-        await addEvent(eventToAddOrEdit);
-
-        await populateEvents();
-
-        hideModal();
-    }, [eventToAddOrEdit, populateEvents, hideModal]);
-
     const prepareAddEvent = useCallback((e: SlotInfo) => {
         setEventToAddOrEdit({
             title: '',
@@ -128,6 +120,25 @@ const App = () => {
             buttonLabel: 'Add',
             isOpen: true,
             isAdding: true
+        });
+    }, []);
+
+    const executeAddEvent = useCallback(async () => {
+        await addEvent(eventToAddOrEdit);
+
+        await populateEvents();
+
+        hideModal();
+    }, [eventToAddOrEdit, populateEvents, hideModal]);
+
+    const prepareEditEvent = useCallback((event: Event) => {
+        setEventToAddOrEdit(event);
+
+        setModalSettings({
+            header: 'Edit Event',
+            buttonLabel: 'Edit',
+            isOpen: true,
+            isAdding: false
         });
     }, []);
 
@@ -146,17 +157,6 @@ const App = () => {
 
         hideModal();
     }, [eventToAddOrEdit, populateEvents, hideModal]);
-
-    const prepareEditEvent = useCallback((event: Event) => {
-        setEventToAddOrEdit(event);
-
-        setModalSettings({
-            header: 'Edit Event',
-            buttonLabel: 'Edit',
-            isOpen: true,
-            isAdding: false
-        });
-    }, []);
 
     useEffect(() => {
         populateEvents();
