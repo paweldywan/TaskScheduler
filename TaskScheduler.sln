@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34928.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskScheduler.Server", "TaskScheduler.Server\TaskScheduler.Server.csproj", "{7C52C1D8-E214-4E3C-805E-07FF8FEA1ECB}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "taskscheduler.client", "taskscheduler.client\taskscheduler.client.esproj", "{D19D9EF5-FADF-43AB-8743-6C3EF7D2C51B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7C52C1D8-E214-4E3C-805E-07FF8FEA1ECB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C52C1D8-E214-4E3C-805E-07FF8FEA1ECB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C52C1D8-E214-4E3C-805E-07FF8FEA1ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C52C1D8-E214-4E3C-805E-07FF8FEA1ECB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D19D9EF5-FADF-43AB-8743-6C3EF7D2C51B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D19D9EF5-FADF-43AB-8743-6C3EF7D2C51B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D19D9EF5-FADF-43AB-8743-6C3EF7D2C51B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D19D9EF5-FADF-43AB-8743-6C3EF7D2C51B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D19D9EF5-FADF-43AB-8743-6C3EF7D2C51B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D19D9EF5-FADF-43AB-8743-6C3EF7D2C51B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {60A5A292-FE98-4481-BD83-E60A313FAD11}
+	EndGlobalSection
+EndGlobal

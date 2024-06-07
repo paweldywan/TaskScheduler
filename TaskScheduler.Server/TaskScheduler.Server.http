@@ -1,0 +1,6 @@
+@TaskScheduler.Server_HostAddress = http://localhost:5098
+
+GET {{TaskScheduler.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
