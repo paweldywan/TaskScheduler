@@ -125,14 +125,6 @@ const App = () => {
         });
     }, []);
 
-    const executeAddEvent = useCallback(async () => {
-        await addEvent(eventToAddOrEdit);
-
-        await populateEvents();
-
-        hideModal();
-    }, [eventToAddOrEdit, populateEvents, hideModal]);
-
     const prepareEditEvent = useCallback((event: Event) => {
         setEventToAddOrEdit(event);
 
@@ -144,14 +136,6 @@ const App = () => {
         });
     }, []);
 
-    const executeEditEvent = useCallback(async () => {
-        await updateEvent(eventToAddOrEdit);
-
-        await populateEvents();
-
-        hideModal();
-    }, [eventToAddOrEdit, populateEvents, hideModal]);
-
     const executeDeleteEvent = useCallback(async () => {
         await deleteEvent(eventToAddOrEdit);
 
@@ -159,6 +143,18 @@ const App = () => {
 
         hideModal();
     }, [eventToAddOrEdit, populateEvents, hideModal]);
+
+    const onSubmit = useCallback(async () => {
+        if (modalSettings.isAdding) {
+            await addEvent(eventToAddOrEdit);
+        } else {
+            await updateEvent(eventToAddOrEdit);
+        }
+
+        await populateEvents();
+
+        hideModal();
+    }, [eventToAddOrEdit, hideModal, modalSettings.isAdding, populateEvents]);
 
     useEffect(() => {
         populateEvents();
@@ -215,7 +211,7 @@ const App = () => {
                     data={eventToAddOrEdit}
                     setData={setEventToAddOrEdit}
                     buttonLabel={modalSettings.buttonLabel}
-                    onSubmit={modalSettings.isAdding ? executeAddEvent : executeEditEvent}
+                    onSubmit={onSubmit}
                     additionalButtons={additionalButtons}
                 />
             </AppModal>
