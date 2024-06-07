@@ -15,5 +15,12 @@ namespace TaskScheduler.BLL.Services
 
             return context.SaveChangesAsync();
         }
+
+        public Task Update(Event entity)
+        {
+            context.Events.Update(entity);
+
+            return context.SaveChangesAsync();
+        }
     }
 }

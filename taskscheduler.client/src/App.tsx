@@ -31,7 +31,8 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import {
     addEvent,
-    getEvents
+    getEvents,
+    updateEvent
 } from './requests';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -59,40 +60,41 @@ import AppForm from './components/AppForm';
 const DnDCalendar = withDragAndDrop(Calendar);
 
 const App = () => {
-    const [data, setData] = useState<Event[]>([]);
+    const [events, setEvents] = useState<Event[]>([]);
 
     const [isAdding, setIsAdding] = useState(false);
 
     const [eventToAdd, setEventToAdd] = useState<Event>({});
 
-    const populateData = async () => {
+    const populateEvents = async () => {
         const dataToSet = await getEvents();
 
-        setData(dataToSet);
+        setEvents(dataToSet);
     };
 
     useEffect(() => {
-        populateData();
+        populateEvents();
     }, []);
 
-    const moveEvent: withDragAndDropProps['onEventDrop'] = useCallback((data: EventInteractionArgs<Event>): void =>
-        setData(currentEvents => {
-            const changedEvent = currentEvents.find(currentEvent => currentEvent.resource === data.event.resource);
+    const moveEvent: withDragAndDropProps['onEventDrop'] = useCallback(async (data: EventInteractionArgs<Event>) => {
+        const changedEvent = events.find(event => event.resource === data.event.resource);
 
-            if (changedEvent) {
-                changedEvent.start = data.start as Date;
+        if (changedEvent) {
+            changedEvent.start = data.start as Date;
 
-                changedEvent.end = data.end as Date;
-            }
+            changedEvent.end = data.end as Date;
 
-            return [...currentEvents];
-        }), []);
+            await updateEvent(changedEvent);
+
+            await populateEvents();
+        }
+    }, [events]);
 
     return (
         <Container fluid>
             <DnDCalendar
                 defaultView='week'
-                events={data}
+                events={events}
                 localizer={localizer}
                 onEventDrop={moveEvent}
                 onEventResize={moveEvent}
@@ -138,7 +140,7 @@ const App = () => {
                     onSubmit={async () => {
                         await addEvent(eventToAdd);
 
-                        await populateData();
+                        await populateEvents();
 
                         setIsAdding(false);
                     }}

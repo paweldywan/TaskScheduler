@@ -23,5 +23,13 @@ namespace TaskScheduler.Server.Controllers
 
             return Ok();
         }
+
+        [HttpPut]
+        public async Task<IActionResult> Put(Event entity)
+        {
+            await eventService.Update(entity);
+
+            return Ok();
+        }
     }
 }

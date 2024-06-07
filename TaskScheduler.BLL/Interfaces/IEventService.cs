@@ -6,5 +6,6 @@ namespace TaskScheduler.BLL.Interfaces
     {
         Task Add(Event entity);
         Task<List<Event>> Get();
+        Task Update(Event entity);
     }
 }

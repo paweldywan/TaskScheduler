@@ -24,3 +24,12 @@ export const addEvent = async (event: Event) =>
         },
         body: JSON.stringify(event)
     });
+
+export const updateEvent = async (event: Event) =>
+    fetch('/api/event', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(event)
+    });
