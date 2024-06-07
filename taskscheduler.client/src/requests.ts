@@ -1,5 +1,26 @@
-export const getEvents = async () => {
-    const response = await fetch('/api/events');
+import {
+    Event
+} from 'react-big-calendar';
 
-    return response.json();
-}
+import moment from 'moment';
+
+export const getEvents = async () => {
+    const response = await fetch('/api/event');
+
+    const json = await response.json();
+
+    return json.map((event: Event) => ({
+        ...event,
+        start: moment(event.start).toDate(),
+        end: moment(event.end).toDate()
+    }));
+};
+
+export const addEvent = async (event: Event) =>
+    fetch('/api/event', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(event)
+    });

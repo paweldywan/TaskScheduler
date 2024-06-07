@@ -30,6 +30,7 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import {
+    addEvent,
     getEvents
 } from './requests';
 
@@ -42,7 +43,9 @@ import {
     Form,
     FormGroup,
     Label,
-    Input
+    Input,
+    Button,
+    Container
 } from 'reactstrap';
 
 const locales = {
@@ -57,6 +60,8 @@ const localizer = dateFnsLocalizer({
     locales
 });
 
+import moment from 'moment';
+
 const DnDCalendar = withDragAndDrop(Calendar);
 
 const App = () => {
@@ -64,13 +69,15 @@ const App = () => {
 
     const [isAdding, setIsAdding] = useState(false);
 
+    const [eventToAdd, setEventToAdd] = useState<Event>({});
+
+    const populateData = async () => {
+        const dataToSet = await getEvents();
+
+        setData(dataToSet);
+    };
+
     useEffect(() => {
-        const populateData = async () => {
-            const dataToSet = await getEvents();
-
-            setData(dataToSet);
-        };
-
         populateData();
     }, []);
 
@@ -88,12 +95,34 @@ const App = () => {
         }), []);
 
     return (
-        <>
+        <Container fluid>
+            <DnDCalendar
+                defaultView='week'
+                events={data}
+                localizer={localizer}
+                onEventDrop={moveEvent}
+                onEventResize={moveEvent}
+                onSelectSlot={e => {
+                    setEventToAdd({
+                        title: '',
+                        start: e.start,
+                        end: e.end
+                    });
+
+                    setIsAdding(true);
+                }}
+                resizable
+                style={{ height: '100vh' }}
+                selectable
+            />
+
             <Modal
                 isOpen={isAdding}
                 toggle={() => setIsAdding(prevState => !prevState)}
             >
-                <ModalHeader>
+                <ModalHeader
+                    toggle={() => setIsAdding(prevState => !prevState)}
+                >
                     Add Event
                 </ModalHeader>
 
@@ -105,9 +134,13 @@ const App = () => {
                             </Label>
 
                             <Input
-                                type='text'
                                 name='title'
                                 id='title'
+                                value={eventToAdd.title as string}
+                                onChange={e => setEventToAdd({
+                                    ...eventToAdd,
+                                    title: e.target.value
+                                })}
                             />
                         </FormGroup>
 
@@ -120,6 +153,11 @@ const App = () => {
                                 type='datetime-local'
                                 name='start'
                                 id='start'
+                                value={moment(eventToAdd.start).format('YYYY-MM-DDTHH:mm')}
+                                onChange={e => setEventToAdd({
+                                    ...eventToAdd,
+                                    start: new Date(e.target.value)
+                                })}
                             />
                         </FormGroup>
 
@@ -132,30 +170,30 @@ const App = () => {
                                 type='datetime-local'
                                 name='end'
                                 id='end'
+                                value={moment(eventToAdd.end).format('YYYY-MM-DDTHH:mm')}
+                                onChange={e => setEventToAdd({
+                                    ...eventToAdd,
+                                    end: new Date(e.target.value)
+                                })}
                             />
                         </FormGroup>
 
                         <Button
                             color='primary'
-                            onClick={() => setIsAdding(prevState => !prevState)}
+                            onClick={async () => {
+                                await addEvent(eventToAdd);
+
+                                await populateData();
+
+                                setIsAdding(false);
+                            }}
                         >
                             Add
                         </Button>
                     </Form>
                 </ModalBody>
             </Modal>
-
-            <DnDCalendar
-                defaultView='week'
-                events={data}
-                localizer={localizer}
-                onEventDrop={moveEvent}
-                onEventResize={moveEvent}
-                onSelectSlot={() => setIsAdding(true)}
-                resizable
-                style={{ height: '100vh' }}
-            />
-        </>
+        </Container>
     );
 }
 

@@ -1,4 +1,6 @@
 
+using TaskScheduler.BLL.Interfaces;
+using TaskScheduler.BLL.Services;
 using TaskScheduler.DAL;
 using TaskScheduler.DAL.SampleData;
 
@@ -27,6 +29,8 @@ namespace TaskScheduler.Server
             services.AddSqlServer<TaskSchedulerContext>(connectionString);
 
             services.AddScoped<TaskSchedulerSeeder>();
+
+            services.AddScoped<IEventService, EventService>();
 
             var app = builder.Build();
 
