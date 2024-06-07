@@ -7,7 +7,8 @@ import {
 import {
     Calendar,
     dateFnsLocalizer,
-    Event
+    Event,
+    SlotInfo
 } from 'react-big-calendar';
 
 import withDragAndDrop, {
@@ -66,14 +67,10 @@ const App = () => {
 
     const [eventToAdd, setEventToAdd] = useState<Event>({});
 
-    const populateEvents = async () => {
+    const populateEvents = useCallback(async () => {
         const dataToSet = await getEvents();
 
         setEvents(dataToSet);
-    };
-
-    useEffect(() => {
-        populateEvents();
     }, []);
 
     const moveEvent: withDragAndDropProps['onEventDrop'] = useCallback(async (data: EventInteractionArgs<Event>) => {
@@ -88,7 +85,30 @@ const App = () => {
 
             await populateEvents();
         }
-    }, [events]);
+    }, [events, populateEvents]);
+
+    const prepareAddEvent = useCallback((e: SlotInfo) => {
+        setEventToAdd({
+            title: '',
+            start: e.start,
+            end: e.end
+        });
+
+        setIsAdding(true);
+    }, []);
+
+    const executeAddEvent = useCallback(async () => {
+        await addEvent(eventToAdd);
+
+        await populateEvents();
+
+        setIsAdding(false);
+    }, [eventToAdd, populateEvents]);
+
+    useEffect(() => {
+        populateEvents();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <Container fluid>
@@ -98,18 +118,10 @@ const App = () => {
                 localizer={localizer}
                 onEventDrop={moveEvent}
                 onEventResize={moveEvent}
-                onSelectSlot={e => {
-                    setEventToAdd({
-                        title: '',
-                        start: e.start,
-                        end: e.end
-                    });
-
-                    setIsAdding(true);
-                }}
+                onSelectSlot={prepareAddEvent}
                 resizable
-                style={{ height: '100vh' }}
                 selectable
+                style={{ height: '100vh' }}
             />
 
             <AppModal
@@ -136,14 +148,8 @@ const App = () => {
                     ]}
                     data={eventToAdd}
                     setData={setEventToAdd}
-                    buttonLabel='Add'
-                    onSubmit={async () => {
-                        await addEvent(eventToAdd);
-
-                        await populateEvents();
-
-                        setIsAdding(false);
-                    }}
+                    buttonLabel={'Add'}
+                    onSubmit={executeAddEvent}
                 />
             </AppModal>
         </Container>
