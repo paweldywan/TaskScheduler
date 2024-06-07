@@ -37,11 +37,6 @@ import {
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import {
-    Form,
-    FormGroup,
-    Label,
-    Input,
-    Button,
     Container
 } from 'reactstrap';
 
@@ -57,8 +52,9 @@ const localizer = dateFnsLocalizer({
     locales
 });
 
-import moment from 'moment';
 import AppModal from './components/AppModal';
+
+import AppForm from './components/AppForm';
 
 const DnDCalendar = withDragAndDrop(Calendar);
 
@@ -119,70 +115,34 @@ const App = () => {
                 isOpen={isAdding}
                 setIsOpen={setIsAdding}
             >
-                <Form>
-                    <FormGroup>
-                        <Label for='title'>
-                            Title
-                        </Label>
+                <AppForm
+                    inputs={[
+                        {
+                            key: 'title',
+                            label: 'Title'
+                        },
+                        {
+                            key: 'start',
+                            label: 'Start',
+                            type: 'datetime-local'
+                        },
+                        {
+                            key: 'end',
+                            label: 'End',
+                            type: 'datetime-local'
+                        }
+                    ]}
+                    data={eventToAdd}
+                    setData={setEventToAdd}
+                    buttonLabel='Add'
+                    onSubmit={async () => {
+                        await addEvent(eventToAdd);
 
-                        <Input
-                            name='title'
-                            id='title'
-                            value={eventToAdd.title as string}
-                            onChange={e => setEventToAdd({
-                                ...eventToAdd,
-                                title: e.target.value
-                            })}
-                        />
-                    </FormGroup>
+                        await populateData();
 
-                    <FormGroup>
-                        <Label for='start'>
-                            Start
-                        </Label>
-
-                        <Input
-                            type='datetime-local'
-                            name='start'
-                            id='start'
-                            value={moment(eventToAdd.start).format('YYYY-MM-DDTHH:mm')}
-                            onChange={e => setEventToAdd({
-                                ...eventToAdd,
-                                start: new Date(e.target.value)
-                            })}
-                        />
-                    </FormGroup>
-
-                    <FormGroup>
-                        <Label for='end'>
-                            End
-                        </Label>
-
-                        <Input
-                            type='datetime-local'
-                            name='end'
-                            id='end'
-                            value={moment(eventToAdd.end).format('YYYY-MM-DDTHH:mm')}
-                            onChange={e => setEventToAdd({
-                                ...eventToAdd,
-                                end: new Date(e.target.value)
-                            })}
-                        />
-                    </FormGroup>
-
-                    <Button
-                        color='primary'
-                        onClick={async () => {
-                            await addEvent(eventToAdd);
-
-                            await populateData();
-
-                            setIsAdding(false);
-                        }}
-                    >
-                        Add
-                    </Button>
-                </Form>
+                        setIsAdding(false);
+                    }}
+                />
             </AppModal>
         </Container>
     );
