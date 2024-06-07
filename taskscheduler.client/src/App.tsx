@@ -65,7 +65,9 @@ const App = () => {
 
     const [isAdding, setIsAdding] = useState(false);
 
-    const [eventToAdd, setEventToAdd] = useState<Event>({});
+    const [isEditing, setIsEditing] = useState(false);
+
+    const [eventToAddOrEdit, setEventToAddOrEdit] = useState<Event>({});
 
     const populateEvents = useCallback(async () => {
         const dataToSet = await getEvents();
@@ -88,7 +90,7 @@ const App = () => {
     }, [events, populateEvents]);
 
     const prepareAddEvent = useCallback((e: SlotInfo) => {
-        setEventToAdd({
+        setEventToAddOrEdit({
             title: '',
             start: e.start,
             end: e.end
@@ -98,12 +100,26 @@ const App = () => {
     }, []);
 
     const executeAddEvent = useCallback(async () => {
-        await addEvent(eventToAdd);
+        await addEvent(eventToAddOrEdit);
 
         await populateEvents();
 
         setIsAdding(false);
-    }, [eventToAdd, populateEvents]);
+    }, [eventToAddOrEdit, populateEvents]);
+
+    const prepareEditEvent = useCallback((event: Event) => {
+        setEventToAddOrEdit(event);
+
+        setIsEditing(true);
+    }, []);
+
+    const executeEditEvent = useCallback(async () => {
+        await updateEvent(eventToAddOrEdit);
+
+        await populateEvents();
+
+        setIsEditing(false);
+    }, [eventToAddOrEdit, populateEvents]);
 
     useEffect(() => {
         populateEvents();
@@ -119,15 +135,16 @@ const App = () => {
                 onEventDrop={moveEvent}
                 onEventResize={moveEvent}
                 onSelectSlot={prepareAddEvent}
+                onSelectEvent={prepareEditEvent}
                 resizable
                 selectable
                 style={{ height: '100vh' }}
             />
 
             <AppModal
-                header='Add Event'
-                isOpen={isAdding}
-                setIsOpen={setIsAdding}
+                header={isAdding ? 'Add Event' : 'Edit Event'} 
+                isOpen={isAdding || isEditing}
+                setIsOpen={isAdding ? setIsAdding : setIsEditing}
             >
                 <AppForm
                     inputs={[
@@ -146,10 +163,10 @@ const App = () => {
                             type: 'datetime-local'
                         }
                     ]}
-                    data={eventToAdd}
-                    setData={setEventToAdd}
-                    buttonLabel={'Add'}
-                    onSubmit={executeAddEvent}
+                    data={eventToAddOrEdit}
+                    setData={setEventToAddOrEdit}
+                    buttonLabel={isAdding ? 'Add' : 'Edit'}
+                    onSubmit={isAdding ? executeAddEvent : executeEditEvent}
                 />
             </AppModal>
         </Container>
