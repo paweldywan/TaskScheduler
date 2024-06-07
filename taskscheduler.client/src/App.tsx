@@ -10,6 +10,7 @@ import {
 } from 'react-big-calendar';
 
 import withDragAndDrop, {
+    EventInteractionArgs,
     withDragAndDropProps
 } from 'react-big-calendar/lib/addons/dragAndDrop';
 
@@ -58,35 +59,31 @@ const App: FC = () => {
     const [events, setEvents] = useState<Event[]>([
         {
             title: 'Learn cool stuff',
+            resource: 1,
             start,
             end
         }
     ]);
 
-    const onEventResize: withDragAndDropProps['onEventResize'] = data => {
-        const { start, end } = data;
-
+    const moveEvent: withDragAndDropProps['onEventDrop'] = (data: EventInteractionArgs<Event>): void =>
         setEvents(currentEvents => {
-            const firstEvent = {
-                start: new Date(start),
-                end: new Date(end)
-            };
+            const changedEvent = currentEvents.find(currentEvent => currentEvent.resource === data.event.resource);
 
-            return [...currentEvents, firstEvent];
+            if (changedEvent) {
+                changedEvent.start = data.start as Date;
+                changedEvent.end = data.end as Date;
+            }
+
+            return [...currentEvents];
         });
-    };
-
-    const onEventDrop: withDragAndDropProps['onEventDrop'] = data => {
-        console.log(data);
-    };
 
     return (
         <DnDCalendar
             defaultView='week'
             events={events}
             localizer={localizer}
-            onEventDrop={onEventDrop}
-            onEventResize={onEventResize}
+            onEventDrop={moveEvent}
+            onEventResize={moveEvent}
             resizable
             style={{ height: '100vh' }}
         />
