@@ -4,7 +4,7 @@ import {
 
 import moment from 'moment';
 
-export const getEvents = async () => {
+export const getEvents: () => Promise<Event[]> = async () => {
     const response = await fetch('/api/event');
 
     const json = await response.json();

@@ -10,13 +10,13 @@ import {
 
 import {
     FormButton,
-    FormInputs
+    FormInput
 } from "../interfaces";
 
 import moment from "moment";
 
 interface Props<T> {
-    inputs: FormInputs<T>[];
+    inputs: FormInput<T>[];
     data: T;
     setData: (data: T) => void;
     buttonLabel: string;

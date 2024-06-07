@@ -1,6 +1,7 @@
 import {
     useCallback,
     useEffect,
+    useMemo,
     useState
 } from 'react';
 
@@ -60,6 +61,8 @@ import AppModal from './components/AppModal';
 import AppForm from './components/AppForm';
 
 import {
+    FormButton,
+    FormInput,
     ModalSettings
 } from './interfaces';
 
@@ -163,6 +166,31 @@ const App = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const inputs: FormInput<Event>[] = useMemo(() => [
+        {
+            key: 'title',
+            label: 'Title'
+        },
+        {
+            key: 'start',
+            label: 'Start',
+            type: 'datetime-local'
+        },
+        {
+            key: 'end',
+            label: 'End',
+            type: 'datetime-local'
+        }
+    ], []);
+
+    const additionalButtons: FormButton[] | undefined = useMemo(() => modalSettings.isAdding ? undefined : [
+        {
+            label: 'Delete',
+            onClick: executeDeleteEvent,
+            color: 'danger'
+        }
+    ], [modalSettings.isAdding, executeDeleteEvent]);
+
     return (
         <Container fluid>
             <DnDCalendar
@@ -184,33 +212,12 @@ const App = () => {
                 setIsOpen={setModalIsOpen}
             >
                 <AppForm
-                    inputs={[
-                        {
-                            key: 'title',
-                            label: 'Title'
-                        },
-                        {
-                            key: 'start',
-                            label: 'Start',
-                            type: 'datetime-local'
-                        },
-                        {
-                            key: 'end',
-                            label: 'End',
-                            type: 'datetime-local'
-                        }
-                    ]}
+                    inputs={inputs}
                     data={eventToAddOrEdit}
                     setData={setEventToAddOrEdit}
                     buttonLabel={modalSettings.buttonLabel}
                     onSubmit={modalSettings.isAdding ? executeAddEvent : executeEditEvent}
-                    additionalButtons={modalSettings.isAdding ? undefined : [
-                        {
-                            label: 'Delete',
-                            onClick: executeDeleteEvent,
-                            color: 'danger'
-                        }
-                    ]}
+                    additionalButtons={additionalButtons}
                 />
             </AppModal>
         </Container>
