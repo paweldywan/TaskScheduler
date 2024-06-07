@@ -13,8 +13,7 @@ import {
 } from 'react-big-calendar';
 
 import withDragAndDrop, {
-    EventInteractionArgs,
-    withDragAndDropProps
+    EventInteractionArgs
 } from 'react-big-calendar/lib/addons/dragAndDrop';
 
 import format from 'date-fns/format';
@@ -86,7 +85,7 @@ const App = () => {
         setEvents(dataToSet);
     }, []);
 
-    const moveEvent: withDragAndDropProps['onEventDrop'] = useCallback(async (data: EventInteractionArgs<Event>) => {
+    const moveEvent = useCallback(async (data: EventInteractionArgs<Event>) => {
         const changedEvent = events.find(event => event.resource === data.event.resource);
 
         if (changedEvent) {
