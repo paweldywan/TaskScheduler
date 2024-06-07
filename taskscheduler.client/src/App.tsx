@@ -37,9 +37,6 @@ import {
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import {
-    Modal,
-    ModalHeader,
-    ModalBody,
     Form,
     FormGroup,
     Label,
@@ -61,6 +58,7 @@ const localizer = dateFnsLocalizer({
 });
 
 import moment from 'moment';
+import AppModal from './components/AppModal';
 
 const DnDCalendar = withDragAndDrop(Calendar);
 
@@ -116,83 +114,76 @@ const App = () => {
                 selectable
             />
 
-            <Modal
+            <AppModal
+                header='Add Event'
                 isOpen={isAdding}
-                toggle={() => setIsAdding(prevState => !prevState)}
+                setIsOpen={setIsAdding}
             >
-                <ModalHeader
-                    toggle={() => setIsAdding(prevState => !prevState)}
-                >
-                    Add Event
-                </ModalHeader>
+                <Form>
+                    <FormGroup>
+                        <Label for='title'>
+                            Title
+                        </Label>
 
-                <ModalBody>
-                    <Form>
-                        <FormGroup>
-                            <Label for='title'>
-                                Title
-                            </Label>
+                        <Input
+                            name='title'
+                            id='title'
+                            value={eventToAdd.title as string}
+                            onChange={e => setEventToAdd({
+                                ...eventToAdd,
+                                title: e.target.value
+                            })}
+                        />
+                    </FormGroup>
 
-                            <Input
-                                name='title'
-                                id='title'
-                                value={eventToAdd.title as string}
-                                onChange={e => setEventToAdd({
-                                    ...eventToAdd,
-                                    title: e.target.value
-                                })}
-                            />
-                        </FormGroup>
+                    <FormGroup>
+                        <Label for='start'>
+                            Start
+                        </Label>
 
-                        <FormGroup>
-                            <Label for='start'>
-                                Start
-                            </Label>
+                        <Input
+                            type='datetime-local'
+                            name='start'
+                            id='start'
+                            value={moment(eventToAdd.start).format('YYYY-MM-DDTHH:mm')}
+                            onChange={e => setEventToAdd({
+                                ...eventToAdd,
+                                start: new Date(e.target.value)
+                            })}
+                        />
+                    </FormGroup>
 
-                            <Input
-                                type='datetime-local'
-                                name='start'
-                                id='start'
-                                value={moment(eventToAdd.start).format('YYYY-MM-DDTHH:mm')}
-                                onChange={e => setEventToAdd({
-                                    ...eventToAdd,
-                                    start: new Date(e.target.value)
-                                })}
-                            />
-                        </FormGroup>
+                    <FormGroup>
+                        <Label for='end'>
+                            End
+                        </Label>
 
-                        <FormGroup>
-                            <Label for='end'>
-                                End
-                            </Label>
+                        <Input
+                            type='datetime-local'
+                            name='end'
+                            id='end'
+                            value={moment(eventToAdd.end).format('YYYY-MM-DDTHH:mm')}
+                            onChange={e => setEventToAdd({
+                                ...eventToAdd,
+                                end: new Date(e.target.value)
+                            })}
+                        />
+                    </FormGroup>
 
-                            <Input
-                                type='datetime-local'
-                                name='end'
-                                id='end'
-                                value={moment(eventToAdd.end).format('YYYY-MM-DDTHH:mm')}
-                                onChange={e => setEventToAdd({
-                                    ...eventToAdd,
-                                    end: new Date(e.target.value)
-                                })}
-                            />
-                        </FormGroup>
+                    <Button
+                        color='primary'
+                        onClick={async () => {
+                            await addEvent(eventToAdd);
 
-                        <Button
-                            color='primary'
-                            onClick={async () => {
-                                await addEvent(eventToAdd);
+                            await populateData();
 
-                                await populateData();
-
-                                setIsAdding(false);
-                            }}
-                        >
-                            Add
-                        </Button>
-                    </Form>
-                </ModalBody>
-            </Modal>
+                            setIsAdding(false);
+                        }}
+                    >
+                        Add
+                    </Button>
+                </Form>
+            </AppModal>
         </Container>
     );
 }
