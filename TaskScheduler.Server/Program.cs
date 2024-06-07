@@ -1,4 +1,7 @@
 
+using TaskScheduler.DAL;
+using TaskScheduler.DAL.SampleData;
+
 namespace TaskScheduler.Server
 {
     public class Program
@@ -7,29 +10,46 @@ namespace TaskScheduler.Server
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            var services = builder.Services;
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            var environment = builder.Environment;
+
+            var configuration = builder.Configuration;
+
+            services.AddControllers();
+
+            services.AddEndpointsApiExplorer();
+
+            services.AddSwaggerGen();
+
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            services.AddSqlServer<TaskSchedulerContext>(connectionString);
+
+            services.AddScoped<TaskSchedulerSeeder>();
 
             var app = builder.Build();
 
+            using var scope = app.Services.CreateScope();
+
+            var seeder = scope.ServiceProvider.GetRequiredService<TaskSchedulerSeeder>();
+
+            seeder.Migrate().Wait();
+
             app.UseDefaultFiles();
+
             app.UseStaticFiles();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            if (environment.IsDevelopment())
             {
                 app.UseSwagger();
+
                 app.UseSwaggerUI();
             }
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
