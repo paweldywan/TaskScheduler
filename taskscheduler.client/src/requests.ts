@@ -33,3 +33,8 @@ export const updateEvent = async (event: Event) =>
         },
         body: JSON.stringify(event)
     });
+
+export const deleteEvent = async (event: Event) =>
+    fetch(`/api/event/${event.resource}` , {
+        method: 'DELETE'
+    });

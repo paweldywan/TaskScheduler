@@ -32,6 +32,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import {
     addEvent,
+    deleteEvent,
     getEvents,
     updateEvent
 } from './requests';
@@ -58,16 +59,23 @@ import AppModal from './components/AppModal';
 
 import AppForm from './components/AppForm';
 
+import {
+    ModalSettings
+} from './interfaces';
+
 const DnDCalendar = withDragAndDrop(Calendar);
 
 const App = () => {
     const [events, setEvents] = useState<Event[]>([]);
 
-    const [isAdding, setIsAdding] = useState(false);
-
-    const [isEditing, setIsEditing] = useState(false);
-
     const [eventToAddOrEdit, setEventToAddOrEdit] = useState<Event>({});
+
+    const [modalSettings, setModalSettings] = useState<ModalSettings>({
+        header: '',
+        buttonLabel: '',
+        isOpen: false,
+        isAdding: false
+    });
 
     const populateEvents = useCallback(async () => {
         const dataToSet = await getEvents();
@@ -89,6 +97,25 @@ const App = () => {
         }
     }, [events, populateEvents]);
 
+    const setModalIsOpen = useCallback((isOpen: boolean) => {
+        setModalSettings(prevState => ({
+            ...prevState,
+            isOpen
+        }));
+    }, []);
+
+    const hideModal = useCallback(() => {
+        setModalIsOpen(false);
+    }, [setModalIsOpen]);
+
+    const executeAddEvent = useCallback(async () => {
+        await addEvent(eventToAddOrEdit);
+
+        await populateEvents();
+
+        hideModal();
+    }, [eventToAddOrEdit, populateEvents, hideModal]);
+
     const prepareAddEvent = useCallback((e: SlotInfo) => {
         setEventToAddOrEdit({
             title: '',
@@ -96,21 +123,12 @@ const App = () => {
             end: e.end
         });
 
-        setIsAdding(true);
-    }, []);
-
-    const executeAddEvent = useCallback(async () => {
-        await addEvent(eventToAddOrEdit);
-
-        await populateEvents();
-
-        setIsAdding(false);
-    }, [eventToAddOrEdit, populateEvents]);
-
-    const prepareEditEvent = useCallback((event: Event) => {
-        setEventToAddOrEdit(event);
-
-        setIsEditing(true);
+        setModalSettings({
+            header: 'Add Event',
+            buttonLabel: 'Add',
+            isOpen: true,
+            isAdding: true
+        });
     }, []);
 
     const executeEditEvent = useCallback(async () => {
@@ -118,8 +136,27 @@ const App = () => {
 
         await populateEvents();
 
-        setIsEditing(false);
-    }, [eventToAddOrEdit, populateEvents]);
+        hideModal();
+    }, [eventToAddOrEdit, populateEvents, hideModal]);
+
+    const executeDeleteEvent = useCallback(async () => {
+        await deleteEvent(eventToAddOrEdit);
+
+        await populateEvents();
+
+        hideModal();
+    }, [eventToAddOrEdit, populateEvents, hideModal]);
+
+    const prepareEditEvent = useCallback((event: Event) => {
+        setEventToAddOrEdit(event);
+
+        setModalSettings({
+            header: 'Edit Event',
+            buttonLabel: 'Edit',
+            isOpen: true,
+            isAdding: false
+        });
+    }, []);
 
     useEffect(() => {
         populateEvents();
@@ -142,9 +179,9 @@ const App = () => {
             />
 
             <AppModal
-                header={isAdding ? 'Add Event' : 'Edit Event'} 
-                isOpen={isAdding || isEditing}
-                setIsOpen={isAdding ? setIsAdding : setIsEditing}
+                header={modalSettings.header}
+                isOpen={modalSettings.isOpen}
+                setIsOpen={setModalIsOpen}
             >
                 <AppForm
                     inputs={[
@@ -165,8 +202,15 @@ const App = () => {
                     ]}
                     data={eventToAddOrEdit}
                     setData={setEventToAddOrEdit}
-                    buttonLabel={isAdding ? 'Add' : 'Edit'}
-                    onSubmit={isAdding ? executeAddEvent : executeEditEvent}
+                    buttonLabel={modalSettings.buttonLabel}
+                    onSubmit={modalSettings.isAdding ? executeAddEvent : executeEditEvent}
+                    additionalButtons={modalSettings.isAdding ? undefined : [
+                        {
+                            label: 'Delete',
+                            onClick: executeDeleteEvent,
+                            color: 'danger'
+                        }
+                    ]}
                 />
             </AppModal>
         </Container>

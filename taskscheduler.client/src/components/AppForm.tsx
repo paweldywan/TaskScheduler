@@ -1,12 +1,15 @@
 import {
     Button,
+    Container,
     Form,
     FormGroup,
     Input,
-    Label
+    Label,
+    Row
 } from "reactstrap";
 
 import {
+    FormButton,
     FormInputs
 } from "../interfaces";
 
@@ -17,7 +20,8 @@ interface Props<T> {
     data: T;
     setData: (data: T) => void;
     buttonLabel: string;
-    onSubmit: () => void;
+    onSubmit?: () => void;
+    additionalButtons?: FormButton[];
 }
 
 const AppForm = <T,>({
@@ -25,14 +29,15 @@ const AppForm = <T,>({
     data,
     setData,
     buttonLabel,
-    onSubmit
+    onSubmit,
+    additionalButtons
 }: Props<T>) => {
     return (
         <Form
             onSubmit={e => {
                 e.preventDefault();
 
-                onSubmit();
+                onSubmit?.();
             }}
         >
             {inputs.map(input => (
@@ -54,11 +59,25 @@ const AppForm = <T,>({
                 </FormGroup>
             ))}
 
-            <Button
-                color='primary'
-            >
-                {buttonLabel}
-            </Button>
+            <Container>
+                <Row xs="auto" className="gap-2">
+                    <Button
+                        color='primary'
+                    >
+                        {buttonLabel}
+                    </Button>
+
+                    {additionalButtons?.map(button => (
+                        <Button
+                            key={button.label}
+                            color={button.color}
+                            onClick={button.onClick}
+                        >
+                            {button.label}
+                        </Button>
+                    ))}
+                </Row>
+            </Container>
         </Form>
     );
 };

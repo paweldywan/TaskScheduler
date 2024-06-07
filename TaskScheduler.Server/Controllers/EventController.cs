@@ -31,5 +31,13 @@ namespace TaskScheduler.Server.Controllers
 
             return Ok();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await eventService.Delete(id);
+
+            return Ok();
+        }
     }
 }

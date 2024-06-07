@@ -22,5 +22,7 @@ namespace TaskScheduler.BLL.Services
 
             return context.SaveChangesAsync();
         }
+
+        public Task Delete(int id) => context.Events.Where(e => e.Id == id).ExecuteDeleteAsync();
     }
 }
