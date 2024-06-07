@@ -4,7 +4,7 @@ import {
 
 import moment from 'moment';
 
-export const getEvents: () => Promise<Event[]> = async () => {
+export const getEvents = async (): Promise<Event[]> => {
     const response = await fetch('/api/event');
 
     const json = await response.json();
@@ -35,6 +35,6 @@ export const updateEvent = async (event: Event) =>
     });
 
 export const deleteEvent = async (event: Event) =>
-    fetch(`/api/event/${event.resource}` , {
+    fetch(`/api/event/${event.resource}`, {
         method: 'DELETE'
     });
