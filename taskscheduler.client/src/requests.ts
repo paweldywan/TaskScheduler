@@ -1,11 +1,24 @@
 import {
     Event
 } from 'react-big-calendar';
-
+ 
 import moment from 'moment';
 
-export const getEvents = async (): Promise<Event[]> => {
+export const getEvents = async (): Promise<Event[] | undefined> => {
     const response = await fetch('/api/event');
+
+    const status = response.status;
+
+    if (status === 401) {
+        window.location.href = "/Identity/Account/Login";
+
+        return;
+    }
+    else if (status === 403) {
+        window.location.href = "/Identity/Account/AccessDenied";
+
+        return;
+    }
 
     const json = await response.json();
 

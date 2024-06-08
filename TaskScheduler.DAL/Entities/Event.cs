@@ -14,5 +14,7 @@ namespace TaskScheduler.DAL.Entities
         public DateTimeOffset? End { get; set; }
 
         public bool AllDay { get; set; }
+
+        public string? UserId { get; set; }
     }
 }

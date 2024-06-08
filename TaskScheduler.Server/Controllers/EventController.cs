@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskScheduler.BLL.Interfaces;
 using TaskScheduler.DAL.Entities;
 
@@ -6,6 +7,7 @@ namespace TaskScheduler.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EventController(IEventService eventService) : ControllerBase
     {
         [HttpGet]

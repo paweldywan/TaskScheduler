@@ -68,7 +68,7 @@ import {
 const DnDCalendar = withDragAndDrop(Calendar);
 
 const App = () => {
-    const [events, setEvents] = useState<Event[]>([]);
+    const [events, setEvents] = useState<Event[]>();
 
     const [eventToAddOrEdit, setEventToAddOrEdit] = useState<Event>({});
 
@@ -82,11 +82,12 @@ const App = () => {
     const populateEvents = useCallback(async () => {
         const dataToSet = await getEvents();
 
-        setEvents(dataToSet);
+        if (dataToSet)
+            setEvents(dataToSet);
     }, []);
 
     const moveEvent = useCallback(async (data: EventInteractionArgs<Event>) => {
-        const changedEvent = events.find(event => event.resource === data.event.resource);
+        const changedEvent = events?.find(event => event.resource === data.event.resource);
 
         if (changedEvent) {
             changedEvent.start = data.start as Date;
@@ -186,7 +187,7 @@ const App = () => {
         }
     ], [modalSettings.isAdding, executeDeleteEvent]);
 
-    return (
+    return events && (
         <Container fluid>
             <DnDCalendar
                 defaultView='week'
