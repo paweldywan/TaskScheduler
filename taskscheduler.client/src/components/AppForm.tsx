@@ -41,8 +41,14 @@ const AppForm = <T,>({
             }}
         >
             {inputs.map(input => (
-                <FormGroup key={input.key.toString()}>
-                    <Label for={input.key.toString()}>
+                <FormGroup
+                    key={input.key.toString()}
+                    check={input.type === 'checkbox'}
+                >
+                    <Label
+                        for={input.key.toString()}
+                        check={input.type === 'checkbox'}
+                    >
                         {input.label}
                     </Label>
 
@@ -50,17 +56,18 @@ const AppForm = <T,>({
                         type={input.type}
                         name={input.key.toString()}
                         id={input.key.toString()}
-                        value={data[input.key] instanceof Date ? moment(data[input.key] as Date).format('YYYY-MM-DDTHH:mm') : data[input.key] as string}
+                        value={input.type === 'checkbox' ? undefined : data[input.key] instanceof Date ? moment(data[input.key] as Date).format('YYYY-MM-DDTHH:mm') : data[input.key] as string}
+                        checked={input.type === 'checkbox' ? data[input.key] as boolean : undefined}
                         onChange={e => setData({
                             ...data,
-                            [input.key]: data[input.key] instanceof Date ? new Date(e.target.value) : e.target.value
+                            [input.key]: data[input.key] instanceof Date ? new Date(e.target.value) : input.type === 'checkbox' ? e.target.checked : e.target.value
                         })}
                     />
                 </FormGroup>
             ))}
 
-            <Container>
-                <Row xs="auto" className="gap-2">
+            <Container className="mt-3">
+                <Row xs="auto" className="gap-3">
                     <Button
                         color='primary'
                     >

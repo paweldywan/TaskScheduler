@@ -176,6 +176,11 @@ const App = () => {
             key: 'end',
             label: 'End',
             type: 'datetime-local'
+        },
+        {
+            key: 'allDay',
+            label: 'All Day',
+            type: 'checkbox'
         }
     ], []);
 
