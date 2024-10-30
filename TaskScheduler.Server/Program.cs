@@ -84,7 +84,7 @@ namespace TaskScheduler.Server
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            services.AddSqlServer<TaskSchedulerContext>(connectionString);
+            services.AddNpgsql<TaskSchedulerContext>(connectionString);
 
             var isDevelopment = webHostEnvironment.IsDevelopment();
 
